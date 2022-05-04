@@ -1,5 +1,6 @@
 package com.mindex.challenge.config;
 
+import com.mindex.challenge.dao.CompensationRepository;
 import com.mindex.challenge.dao.EmployeeRepository;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -12,9 +13,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@EnableMongoRepositories(basePackageClasses = EmployeeRepository.class)
+@EnableMongoRepositories(basePackageClasses = {EmployeeRepository.class, CompensationRepository.class })
 @Configuration
-public class MongoConfig{
+public class MongoConfig {
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
         return new MongoTemplate(mongoDbFactory(mongoClient));
@@ -25,14 +26,14 @@ public class MongoConfig{
         return new SimpleMongoClientDbFactory(mongoClient, "test");
     }
 
-    @Bean(destroyMethod="shutdown")
+    @Bean(destroyMethod = "shutdown")
     public MongoServer mongoServer() {
         MongoServer mongoServer = new MongoServer(new MemoryBackend());
         mongoServer.bind();
         return mongoServer;
     }
 
-    @Bean(destroyMethod="close")
+    @Bean(destroyMethod = "close")
     public MongoClient mongoClient() {
         return MongoClients.create("mongodb:/" + mongoServer().getLocalAddress());
     }
